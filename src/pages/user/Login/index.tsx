@@ -11,8 +11,13 @@ import React, { useState } from 'react';
 import { ProFormCaptcha, ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-form';
 import { useIntl, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
-import { login } from '@/services/ant-design-pro/api';
+// import { login } from '@/services/ant-design-pro/api';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
+
+// 登录service
+import OpenService from '@/apricot/modules/base/service/open';
+// storage
+import storage from '@/core/utils/storage';
 
 import styles from './index.less';
 
@@ -30,7 +35,7 @@ const LoginMessage: React.FC<{
 );
 
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
+  const [userLoginState, setUserLoginState] = useState<any>({});
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
 
@@ -49,8 +54,20 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: API.LoginParams) => {
     try {
       // 登录
-      const msg = await login({ ...values, type });
-      if (msg.status === 'ok') {
+      // const msg = await login({ ...values, type });
+      const msg = (await OpenService.userLogin({ ...values, type })) as {
+        token?: string;
+        expire?: number;
+        refreshExpire?: any;
+        refreshToken?: any;
+      };
+      console.log('🚀 ~ file: index.tsx ~ line 55 ~ handleSubmit ~ msg', msg);
+      if (msg.token) {
+        console.log('登录成功');
+        // 登录成功 存储 token
+        storage.set('token', msg.token, msg.expire);
+        storage.set('refreshToken', msg.refreshToken, msg.refreshExpire);
+
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',

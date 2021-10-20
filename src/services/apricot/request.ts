@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-20 23:20:48
- * @LastEditTime: 2021-10-20 23:28:13
+ * @LastEditTime: 2021-10-21 02:14:26
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\services\apricot\request.ts
@@ -17,6 +17,7 @@ import 'nprogress/nprogress.css';
 
 axios.defaults.timeout = 30000;
 axios.defaults.withCredentials = true;
+// axios.defaults.baseURL = 'http://127.0.0.1:8001';
 
 NProgress.configure({
   showSpinner: false,
@@ -39,7 +40,8 @@ const ignore = {
 axios.interceptors.request.use(
   (config: any) => {
     // const token = store.getters.token || '';
-    const token = '';
+    const token = storage.get('token');
+    console.log('🚀 ~ file: request.ts ~ line 44 ~ token', token);
 
     if (config.url) {
       if (!ignore.token.some((e) => config.url.includes(e))) {

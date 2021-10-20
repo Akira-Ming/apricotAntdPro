@@ -1,13 +1,6 @@
+// @ts-nocheck
 import request from '@/services/apricot/request';
-import { baseUrl, isDev } from '@/config/env';
-
 export default class BaseService {
-  permission: any;
-  namespace: any;
-  proxy: any;
-  url: any;
-  mock: any;
-
   constructor() {
     const crud: any = {
       page: 'page',
@@ -33,15 +26,6 @@ export default class BaseService {
     if (!options.params) options.params = {};
 
     let ns = '';
-
-    // 是否 mock 模式
-    if (!this.mock) {
-      if (isDev) {
-        ns = this.proxy || baseUrl;
-      } else {
-        ns = this.proxy ? this.url : baseUrl;
-      }
-    }
 
     // 拼接前缀
     if (this.namespace) {

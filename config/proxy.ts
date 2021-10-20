@@ -1,3 +1,11 @@
+/*
+ * @Author: AkiraMing
+ * @Date: 2021-10-20 13:56:02
+ * @LastEditTime: 2021-10-21 01:32:20
+ * @LastEditors: AkiraMing
+ * @Description: 描述
+ * @FilePath: \apricotAntdPro\config\proxy.ts
+ */
 /**
  * 在生产环境 代理是无法生效的，所以这里没有生产环境的配置
  * -------------------------------
@@ -9,7 +17,7 @@
 export default {
   dev: {
     '/api/': {
-      target: 'https://preview.pro.ant.design',
+      target: 'http://127.0.0.1:8001',
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },
