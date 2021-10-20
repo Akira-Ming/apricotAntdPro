@@ -1,3 +1,11 @@
+/*
+ * @Author: AkiraMing
+ * @Date: 2021-10-20 13:56:02
+ * @LastEditTime: 2021-10-20 23:51:25
+ * @LastEditors: AkiraMing
+ * @Description: 描述
+ * @FilePath: \apricotAntdPro\config\config.ts
+ */
 // https://umijs.org/config/
 import { defineConfig } from 'umi';
 import { join } from 'path';
@@ -16,7 +24,7 @@ export default defineConfig({
   },
   layout: {
     // https://umijs.org/zh-CN/plugins/plugin-layout
-    locale: true,
+    locale: false,
     siderWidth: 208,
     ...defaultSettings,
   },

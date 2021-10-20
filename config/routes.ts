@@ -1,4 +1,12 @@
-﻿export default [
+﻿/*
+ * @Author: AkiraMing
+ * @Date: 2021-10-20 13:56:02
+ * @LastEditTime: 2021-10-20 23:53:11
+ * @LastEditors: AkiraMing
+ * @Description: 描述
+ * @FilePath: \apricotAntdPro\config\routes.ts
+ */
+export default [
   {
     path: '/user',
     layout: false,
@@ -20,7 +28,7 @@
   },
   {
     path: '/welcome',
-    name: 'welcome',
+    name: '欢迎页',
     icon: 'smile',
     component: './Welcome',
   },
