@@ -1,3 +1,11 @@
+/*
+ * @Author: AkiraMing
+ * @Date: 2021-10-20 13:56:02
+ * @LastEditTime: 2021-10-22 11:20:44
+ * @LastEditors: AkiraMing
+ * @Description: 描述
+ * @FilePath: \apricotAntdPro\config\config.dev.ts
+ */
 // https://umijs.org/config/
 import { defineConfig } from 'umi';
 

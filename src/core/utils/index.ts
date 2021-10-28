@@ -233,6 +233,14 @@ export function orderBy(list: any[], key: any) {
   return list.sort((a, b) => a[key] - b[key]);
 }
 
+/**
+ * @description 父子关系 --> 树形结构
+ * @author AkriaMing
+ * @date 24/10/2021 18:23:47
+ * @export
+ * @param {any[]} list
+ * @return {*}
+ */
 export function deepTree(list: any[]) {
   const newList: any[] = [];
   const map: any = {};
@@ -243,7 +251,7 @@ export function deepTree(list: any[]) {
     const parent = map[e.parentId];
 
     if (parent) {
-      (parent.children || (parent.children = [])).push(e);
+      (parent.routes || (parent.routes = [])).push(e);
     } else {
       newList.push(e);
     }
@@ -252,10 +260,10 @@ export function deepTree(list: any[]) {
   // eslint-disable-next-line @typescript-eslint/no-shadow
   const fn = (list: any[]) => {
     list.map((e) => {
-      if (e.children instanceof Array) {
-        e.children = orderBy(e.children, 'orderNum');
+      if (e.routes instanceof Array) {
+        e.routes = orderBy(e.routes, 'orderNum');
 
-        fn(e.children);
+        fn(e.routes);
       }
     });
   };
@@ -298,6 +306,54 @@ export function basename(path: string) {
     return path;
   }
   return path.substring(index + 1);
+}
+
+// const state1: any = {
+//   // 授权标识
+//   token: storage.get('token') || null,
+//   // 用户信息
+//   info: storage.get('userInfo') || {},
+// };
+
+export const userUtils = {
+  // 设置用户信息
+  SET_USERINFO(state: any, val: any) {
+    // state.info = val;
+    storage.set('userInfo', val);
+  },
+
+  // 设置授权标识
+  // SET_TOKEN(state: any, { token, expire, refreshToken, refreshExpire }: any) {
+  SET_TOKEN({ token, expire, refreshToken, refreshExpire }: any) {
+    // 请求的唯一标识
+    // state.token = token;
+    storage.set('token', token, expire);
+
+    // 刷新 token 的唯一标识
+    storage.set('refreshToken', refreshToken, refreshExpire);
+  },
+
+  // 移除授权标识
+  // CLEAR_TOKEN(state: any) {
+  CLEAR_TOKEN() {
+    // state.token = null;
+    storage.remove('token');
+    storage.remove('refreshToken');
+  },
+
+  // 移除用户信息
+  // CLEAR_USER(state: any) {
+  CLEAR_USER() {
+    // state.info = {};
+    storage.remove('userInfo');
+  },
+};
+
+export function userRemove() {
+  userUtils.CLEAR_TOKEN();
+  userUtils.CLEAR_USER();
+  // userRemoveUtils.SET_TOKEN();
+  // userRemoveUtils.SET_USERINFO();
 }
 
 export { storage };

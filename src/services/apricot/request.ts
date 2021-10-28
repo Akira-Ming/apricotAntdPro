@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-20 23:20:48
- * @LastEditTime: 2021-10-21 02:14:26
+ * @LastEditTime: 2021-10-29 01:52:51
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\services\apricot\request.ts
@@ -14,6 +14,9 @@ import storage from '@/core/utils/storage';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 // import { ElMessage } from "element-plus";
+import baseServices from '@/apricot/modules/base/service';
+import { userRemove, userUtils } from '@/core/utils';
+import { message as AntdMessage } from 'antd';
 
 axios.defaults.timeout = 30000;
 axios.defaults.withCredentials = true;
@@ -25,7 +28,7 @@ NProgress.configure({
 
 // 请求队列
 // const requests: Function[] = [];
-const requests: any[] = [];
+let requests: any[] = [];
 
 // Token 是否刷新中
 let isRefreshing = false;
@@ -33,7 +36,7 @@ let isRefreshing = false;
 // 忽略规则
 const ignore = {
   NProgress: ['/sys/info/record'],
-  token: ['/login', '/captcha'],
+  token: ['/user/login', '/login', '/captcha'],
 };
 
 // Request
@@ -41,7 +44,7 @@ axios.interceptors.request.use(
   (config: any) => {
     // const token = store.getters.token || '';
     const token = storage.get('token');
-    console.log('🚀 ~ file: request.ts ~ line 44 ~ token', token);
+    const refreshToken = storage.get('refreshToken');
 
     if (config.url) {
       if (!ignore.token.some((e) => config.url.includes(e))) {
@@ -60,7 +63,7 @@ axios.interceptors.request.use(
       console.table('data:', config.method == 'get' ? config.params : config.data);
       console.groupEnd();
     }
-
+    // return config;
     // 验证 token
     if (token) {
       if (config.url.includes('refreshToken')) {
@@ -72,13 +75,26 @@ axios.interceptors.request.use(
         // 判断 refreshToken 是否过期
         if (storage.isExpired('refreshToken')) {
           //   store.dispatch('userRemove');
-          return href('/login');
+          userRemove();
+          return href('/user/login');
         }
 
         // 是否在刷新中
         if (!isRefreshing) {
+          console.log('刷新token', 'color:red');
           isRefreshing = true;
-
+          // baseServices.open.refreshToken(token);
+          baseServices.open.refreshToken(refreshToken).then((token1: any) => {
+            console.log(
+              '%c 🚀 ~ file: request.ts ~ line 86 ~ baseServices.open.refreshToken ~ token1',
+              'color:red',
+              token1,
+            );
+            userUtils.SET_TOKEN(token1.data);
+            requests.forEach((cb) => cb(token1.data.token));
+            requests = [];
+            isRefreshing = false;
+          });
           //   store.dispatch('refreshToken').then((token: string) => {
           //     requests.forEach((cb) => cb(token));
           //     requests = [];
@@ -117,7 +133,10 @@ axios.interceptors.response.use(
 
     switch (code) {
       case 1000:
-        return data;
+        return {
+          success: true,
+          data,
+        };
       default:
         return Promise.reject(message);
     }
@@ -131,13 +150,15 @@ axios.interceptors.response.use(
       switch (status) {
         case 401:
           //   await store.dispatch('userRemove');
-          href('/login');
+          userRemove();
+          AntdMessage.error('重新登录');
+          href('/user/login');
           break;
 
         case 403:
           if (isDev) {
             // ElMessage.error(`${config.url} 无权限访问！！`);
-            console.log(`${config.url} 无权限访问！！`);
+            AntdMessage.error(`${config.url} 无权限访问！！`);
           } else {
             href('/403');
           }
@@ -154,8 +175,8 @@ axios.interceptors.response.use(
 
         case 502:
           if (isDev) {
-            // ElMessage.error(`${config.url} 服务异常！！`);
-            console.log(`${config.url} 服务异常！！`);
+            AntdMessage.error(`${config.url} 服务异常！！`);
+            // console.log(`${config.url} 服务异常！！`);
           } else {
             href('/502');
           }

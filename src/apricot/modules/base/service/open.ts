@@ -1,14 +1,14 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-21 00:06:26
- * @LastEditTime: 2021-10-21 01:40:51
+ * @LastEditTime: 2021-10-22 17:00:16
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\apricot\modules\base\service\open.ts
  */
 import { BaseService, Service } from '@/core';
 
-@Service('api/admin/base/open')
+@Service('admin/base/open')
 class Open extends BaseService {
   /**
    * 用户登录
@@ -61,5 +61,5 @@ class Open extends BaseService {
   }
 }
 
-// export default Open;
-export default new Open();
+export default Open;
+// export default new Open();

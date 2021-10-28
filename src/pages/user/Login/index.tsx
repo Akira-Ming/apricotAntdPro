@@ -15,7 +15,7 @@ import Footer from '@/components/Footer';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 
 // 登录service
-import OpenService from '@/apricot/modules/base/service/open';
+import baseServices from '@/apricot/modules/base/service';
 // storage
 import storage from '@/core/utils/storage';
 
@@ -55,17 +55,17 @@ const Login: React.FC = () => {
     try {
       // 登录
       // const msg = await login({ ...values, type });
-      const msg = (await OpenService.userLogin({ ...values, type })) as {
+      const msg = (await baseServices.open.userLogin({ ...values, type })).data as {
         token?: string;
         expire?: number;
         refreshExpire?: any;
         refreshToken?: any;
       };
-      console.log('🚀 ~ file: index.tsx ~ line 55 ~ handleSubmit ~ msg', msg);
       if (msg.token) {
         console.log('登录成功');
         // 登录成功 存储 token
         storage.set('token', msg.token, msg.expire);
+        // 登录成功 存储 refreshToken
         storage.set('refreshToken', msg.refreshToken, msg.refreshExpire);
 
         const defaultLoginSuccessMessage = intl.formatMessage({
@@ -81,7 +81,7 @@ const Login: React.FC = () => {
         history.push(redirect || '/');
         return;
       }
-      console.log(msg);
+      console.log('登录失败', msg);
       // 如果失败去设置用户错误信息
       setUserLoginState(msg);
     } catch (error) {
@@ -89,6 +89,7 @@ const Login: React.FC = () => {
         id: 'pages.login.failure',
         defaultMessage: '登录失败，请重试！',
       });
+      console.log('%c 登录失败', 'color:red');
       message.error(defaultLoginFailureMessage);
     }
   };

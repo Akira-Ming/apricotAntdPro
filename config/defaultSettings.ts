@@ -1,3 +1,11 @@
+/*
+ * @Author: AkiraMing
+ * @Date: 2021-10-20 13:56:02
+ * @LastEditTime: 2021-10-22 11:20:43
+ * @LastEditors: AkiraMing
+ * @Description: 描述
+ * @FilePath: \apricotAntdPro\config\defaultSettings.ts
+ */
 import { Settings as LayoutSettings } from '@ant-design/pro-layout';
 
 const Settings: LayoutSettings & {
