@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-31 01:58:11
- * @LastEditTime: 2021-10-31 14:59:48
+ * @LastEditTime: 2021-11-01 18:18:54
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\apricot\modules\base\components\AliyunOSSUpload\index.tsx
@@ -39,11 +39,10 @@ class AliyunOSSUpload extends React.Component {
   mockGetOSSData = () => ({
     dir: 'user-dir/',
     expire: '1577811661',
-    host: 'https://test1111111222.oss-cn-hongkong-internal.aliyuncs.com',
-    accessId: 'LTAI5tAaUSB1qinWqRvgTEk1',
-    policy:
-      'eyJleHBpcmF0aW9uIjoiMjAyMS0xMC0zMFQxODowMDo1MC4yMzVaIiwiY29uZGl0aW9ucyI6W1siY29udGVudC1sZW5ndGgtcmFuZ2UiLDAsMjA5NzE1MjAwXV19',
-    signature: 'jP67jl/sOseudNDdV8VSZZfzpwQ=',
+    host: 'https://te11.oss-cn-ho-interal.yuncs.com',
+    accessId: 'LTAI5tAUSBWqRvgTEk1',
+    policy: 'eyJleHBpcmF0aW9uIjoiMjADowMDIiwiY29uZGl0aWsZW5ndGgtcmFuZ2UiLDAsMjA5NzE1MjAwXV19',
+    signature: 'jP67jl/sOsZfzpwQ=',
   });
 
   onChange = ({ fileList }: any) => {
