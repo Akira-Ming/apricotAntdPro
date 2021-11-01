@@ -1,7 +1,7 @@
 ﻿/*
  * @Author: AkiraMing
  * @Date: 2021-10-20 13:56:02
- * @LastEditTime: 2021-10-27 02:31:14
+ * @LastEditTime: 2021-10-29 20:29:19
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\config\routes.ts
@@ -65,6 +65,10 @@ export default [
             component: '@/apricot/modules/base/views/Log',
           }
     ],
+  },
+  {
+    path: '/plugin',
+    component: '@/apricot/modules/base/views/Plugin',
   },
   {
     path: '/admin',

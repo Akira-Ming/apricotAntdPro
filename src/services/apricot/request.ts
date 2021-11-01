@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-20 23:20:48
- * @LastEditTime: 2021-10-29 01:52:51
+ * @LastEditTime: 2021-11-01 10:41:47
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\services\apricot\request.ts
@@ -20,7 +20,7 @@ import { message as AntdMessage } from 'antd';
 
 axios.defaults.timeout = 30000;
 axios.defaults.withCredentials = true;
-// axios.defaults.baseURL = 'http://127.0.0.1:8001';
+// axios.defaults.baseURL = '/api';
 
 NProgress.configure({
   showSpinner: false,

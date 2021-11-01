@@ -1,15 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-20 13:56:02
- * @LastEditTime: 2021-10-21 01:03:19
- * @LastEditors: AkiraMing
- * @Description: 描述
- * @FilePath: \apricotAntdPro\config\config.ts
- */
-/*
- * @Author: AkiraMing
- * @Date: 2021-10-20 13:56:02
- * @LastEditTime: 2021-10-20 23:51:25
+ * @LastEditTime: 2021-10-31 22:31:31
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\config\config.ts

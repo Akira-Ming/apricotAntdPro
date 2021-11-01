@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-20 13:56:02
- * @LastEditTime: 2021-10-29 02:15:24
+ * @LastEditTime: 2021-10-29 13:22:02
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\app.tsx
@@ -113,7 +113,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
           },
         );
         const newTreeMenus = deepTree(newMenus);
-        console.log('🚀 ~ file: app.tsx ~ line 102 ~ request: ~ newTreeMenus', newTreeMenus);
+        // console.log('🚀 ~ file: app.tsx ~ line 102 ~ request: ~ newTreeMenus', newTreeMenus);
         return newTreeMenus;
       },
     },

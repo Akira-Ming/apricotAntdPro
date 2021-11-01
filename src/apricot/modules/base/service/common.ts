@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-21 00:06:26
- * @LastEditTime: 2021-10-25 01:44:25
+ * @LastEditTime: 2021-10-31 16:21:58
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\apricot\modules\base\service\common.ts
@@ -31,11 +31,15 @@ class Common extends BaseService {
    * @returns
    * @memberof CommonService
    */
-  upload(params: any) {
+  upload(data?: any, params?: any) {
     return this.request({
       url: '/upload',
       method: 'POST',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
       params,
+      data,
     });
   }
 

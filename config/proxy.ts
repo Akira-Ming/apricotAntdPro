@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-20 13:56:02
- * @LastEditTime: 2021-10-22 11:21:12
+ * @LastEditTime: 2021-10-31 23:50:25
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\config\proxy.ts
@@ -24,6 +24,12 @@ export default {
     '/admin/': {
       target: 'http://127.0.0.1:8001',
       changeOrigin: true,
+      pathRewrite: { '^': '' },
+    },
+    '/uploads/': {
+      target: 'http://127.0.0.1:8001',
+      changeOrigin: true,
+      method: 'GET',
       pathRewrite: { '^': '' },
     },
   },

@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-24 02:32:49
- * @LastEditTime: 2021-10-24 15:57:39
+ * @LastEditTime: 2021-10-29 15:36:41
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\apricot\modules\base\views\Log\index.tsx
@@ -34,7 +34,6 @@ const columns: ProColumns<TableListItem>[] = [
     title: '昵称',
     dataIndex: 'name',
   },
-
   {
     title: '请求地址',
     dataIndex: 'action',
@@ -79,12 +78,16 @@ export default () => {
           columns={columns}
           request={async (params, sorter, filter) => {
             // console.log(await rolePageData.run(111));
-            const { list } = (await rolePageData.run(params)) as { list: TableListItem[] };
+            const { list, pagination } = (await rolePageData.run(params)) as {
+              list: TableListItem[];
+              pagination: any;
+            };
             // 表单搜索项会从 params 传入，传递给后端接口。
             console.log(params, sorter, filter);
             return Promise.resolve({
               data: list,
               success: true,
+              total: pagination.total,
             });
           }}
           rowKey="id"

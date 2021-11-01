@@ -1,51 +1,42 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-23 17:56:36
- * @LastEditTime: 2021-10-29 02:46:00
+ * @LastEditTime: 2021-10-31 00:39:26
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\apricot\modules\base\views\Menu\index.tsx
  */
 // import React from 'react';
-import { Table, Space, Tag, Button, Modal, Row, Col, Cascader } from 'antd';
+import {
+  Space,
+  Tag,
+  Button,
+  Modal,
+  Row,
+  Col,
+  Cascader,
+  message,
+  Input,
+  Popconfirm,
+  Popover,
+} from 'antd';
 import baseServices from '@/apricot/modules/base/service';
 import { useRequest } from 'umi';
 import { toTreeData } from '@/core/utils/format';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProCard from '@ant-design/pro-card';
-// import SearchTree from '../../components/SearchTree';
-// import type { ProFormInstance } from '@ant-design/pro-form';
 import { BetaSchemaForm } from '@ant-design/pro-form';
 import { useState } from 'react';
 import { storage } from '@/core/utils';
-import { createFromIconfontCN } from '@ant-design/icons';
-const IconFont = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js',
-});
-// import { MenuType } from '../../types';
-// import type { ProColumns } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
+import MyIconList from '@/components/MyIconList';
+import MyIcon from '@/components/MyIcon';
 
 type DataItem = {
   name: string;
   state: string;
 };
 
-// const valueEnum = {
-//   all: { text: '全部', status: 'Default' },
-//   open: {
-//     text: '未解决',
-//     status: 'Error',
-//   },
-//   closed: {
-//     text: '已解决',
-//     status: 'Success',
-//     disabled: true,
-//   },
-//   processing: {
-//     text: '解决中',
-//     status: 'Processing',
-//   },
-// };
 const valueEnum1 = {
   0: { text: '目录' },
   1: { text: '菜单' },
@@ -59,11 +50,18 @@ function Menu() {
   const [visibleState, setVisibleState] = useState(false);
   // 弹窗标题
   const [modalTitle, setModalTitle] = useState('');
-  // const [modalParams, setModalParams] = useState({});
   // 表单初始值
   const [modalInitialValues, setModalInitialValues] = useState({} as any);
+  // 表单参数
+  const [reqParams, setReqParams] = useState({} as any);
+  // 选中图标名称
+  const [iconName, setIconName] = useState('');
   // 菜单数据
-  const { data, run } = useRequest(() => baseServices.system.menu.list({})) as any;
+  const { run, data } = useRequest(() => baseServices.system.menu.list({}), {
+    // manual: true,
+  }) as any;
+  // 图标名称
+  const iconNameDataList = useRequest(() => baseServices.common.iconNames());
 
   const columns: any[] = [
     {
@@ -76,8 +74,9 @@ function Menu() {
       dataIndex: 'icon',
       ellipsis: true,
       align: 'center',
-      render: (icon: string) =>
-        icon ? <IconFont style={{ fontSize: '20px' }} type={icon} /> : null,
+      render: (dom: any, rowData: any) => {
+        return rowData.icon ? <MyIcon style={{ fontSize: '20px' }} type={rowData.icon} /> : null;
+      },
     },
     {
       title: '类型',
@@ -85,7 +84,7 @@ function Menu() {
       align: 'center',
       render: (type: string) => {
         const a = ['目录', '菜单', '权限'];
-        console.log(a[type]);
+        // console.log(a[type]);
         return <Tag color="#108ee9">{a[type]}</Tag>;
       },
     },
@@ -105,7 +104,7 @@ function Menu() {
       title: '路由缓存',
       dataIndex: 'keepAlive',
       align: 'center',
-      render: (keepAlive: string) => (keepAlive ? <IconFont type="icon-check" /> : null),
+      render: (keepAlive: string) => (keepAlive ? <MyIcon type="icon-check" /> : null),
     },
     {
       title: '文件路径',
@@ -147,19 +146,20 @@ function Menu() {
       valueType: 'option',
       fixed: 'right',
       hideInSearch: true,
-      render: (a: any) => {
+      render: (dom: any, rowData: { id: number }) => {
         return (
           <Space>
             <a
               onClick={() => {
                 setModalTitle('新增');
+                setModalInitialValues({ parentId: rowData.id });
                 setVisibleState(true);
               }}
             >
               新增
             </a>
             <a
-              onClick={() => {
+              onClick={async () => {
                 const f = (perms: any) => {
                   let b: any;
                   b = perms;
@@ -172,16 +172,36 @@ function Menu() {
                   }
                   return b;
                 };
-
-                setModalInitialValues({ ...a, type: a.type + '', perms: f(a.perms) });
-                setTypeState(a.type + '');
-                setModalTitle('修改');
+                const res: { data: any } = await baseServices.system.menu.info({ id: rowData.id });
+                console.log('🚀 ~ file: index.tsx ~ line 178 ~ f ~ a', res);
+                setModalInitialValues({
+                  ...res.data,
+                  type: res.data.type + '',
+                  perms: f(res.data.perms),
+                });
+                setTypeState(res.data.type + '');
+                setModalTitle('编辑');
                 setVisibleState(true);
               }}
             >
-              修改
+              编辑
             </a>
-            <a>删除</a>
+            <Popconfirm
+              key="link1"
+              title="是否删除?"
+              onConfirm={async () => {
+                // console.log('🚀 ~ file: index.tsx ~ line 155 ~ onConfirm={ ~ a.id', rowData.id);
+                const res: any = await baseServices.system.menu.delete({ ids: [rowData.id] });
+                // console.log('🚀 ~ file: index.tsx ~ line 156 ~ onConfirm={ ~ res', res);
+                if (!res.success) return message.error('删除失败');
+                message.success('删除成功');
+                setReqParams({ nowTime: new Date().getTime() });
+              }}
+              okText="是"
+              cancelText="否"
+            >
+              <a href="#">删除</a>
+            </Popconfirm>
           </Space>
         );
       },
@@ -220,19 +240,14 @@ function Menu() {
       title: '上级节点',
       dataIndex: 'parentId',
       valueType: 'text',
+      readonly: true,
+      render: () => {
+        const parentName = data.find((r: any) => r.id == modalInitialValues.parentId);
+        return <Input defaultValue={parentName ? parentName.name : '一级菜单'} disabled />;
+      },
       // renderFormItem: (schema, config, form) => {
       //   // return <SearchTree />;
-      //   return (
-      //     <Popover
-      //       content={<SearchTree />}
-      //       title="Title"
-      //       trigger="click"
-      //       visible={true}
-      //       // onVisibleChange={this.handleVisibleChange}
-      //     >
-      //       <Button type="primary">Click me</Button>
-      //     </Popover>
-      //   );
+      //   return ();
       // },
     },
     {
@@ -264,6 +279,35 @@ function Menu() {
       dataIndex: 'icon',
       hideInForm: typeState == '2',
       valueType: 'text',
+      renderFormItem: (schema: any, config: any, form: any) => {
+        return (
+          <Popover
+            content={
+              <div style={{ width: '500px', height: '300px', overflow: 'auto' }}>
+                <MyIconList
+                  iconNameList={iconNameDataList.data}
+                  onChange={(value: any) => {
+                    // console.log('我是Menu', value);
+                    setIconName(value);
+                    form.setFieldsValue({
+                      icon: value,
+                    });
+                  }}
+                />
+              </div>
+            }
+            trigger="click"
+            placement="bottom"
+          >
+            <Input
+              // defaultValue={modalInitialValues.icon}
+              value={iconName || modalInitialValues.icon}
+              placeholder="请选择"
+              allowClear
+            />
+          </Popover>
+        );
+      },
     },
     {
       title: '排序号',
@@ -335,29 +379,43 @@ function Menu() {
   return (
     <PageContainer>
       <ProCard>
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => {
-              // getMenuData();
-              run();
-            }}
-          >
-            新增
-          </Button>
-        </Space>
-        <Table
-          pagination={false}
-          bordered
-          columns={columns}
-          rowKey="id"
-          dataSource={
-            data ? (toTreeData(data, { id: 'id', parentId: 'parentId' }) as any) : undefined
-          }
+        <ProTable
           scroll={{
             x: 1500,
             y: 500,
           }}
+          columns={columns}
+          params={reqParams}
+          request={async () => {
+            // 表单搜索项会从 params 传入，传递给后端接口。
+            // console.log(params, sorter, filter);
+            const res = await run();
+            // console.log('🚀 ~ file: index.tsx ~ line 375 ~ request={ ~ res', res);
+            return Promise.resolve({
+              data: toTreeData(res, { id: 'id', parentId: 'parentId' }) as any,
+              success: true,
+            });
+          }}
+          rowKey="id"
+          pagination={false}
+          search={false}
+          dateFormatter="string"
+          headerTitle="菜单列表"
+          toolBarRender={() => [
+            <Button
+              type="primary"
+              key="primary"
+              onClick={() => {
+                setModalTitle('新增');
+                setVisibleState(true);
+              }}
+            >
+              新增
+            </Button>,
+            <Button type="primary" key="primary" onClick={() => {}}>
+              修改路由
+            </Button>,
+          ]}
         />
         <Modal
           title={modalTitle}
@@ -375,7 +433,6 @@ function Menu() {
             layout="horizontal"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 20 }}
-            // params={modalParams}
             initialValues={modalInitialValues}
             submitter={{
               // 配置按钮文本
@@ -397,18 +454,30 @@ function Menu() {
               },
             }}
             onFinish={async (values) => {
-              if (modalTitle === '修改') {
+              // console.log('🚀 ~ file: index.tsx ~ line 426 ~ onFinish={ ~ values', values);
+
+              // return;
+              if (modalTitle === '编辑') {
                 const updateRes = (await baseServices.system.menu.update({
                   ...values,
                   id: modalInitialValues.id,
                 })) as any;
-                if (!updateRes.success) return console.log('修改失败');
-                setVisibleState(false);
-                setModalInitialValues({});
-                run();
+                if (!updateRes.success) return message.error('修改失败');
+                message.success('修改成功');
               }
+              if (modalTitle === '新增') {
+                const updateRes = (await baseServices.system.menu.add({
+                  ...values,
+                })) as any;
+                if (!updateRes.success) return message.error('添加失败');
+                message.success('添加成功');
+              }
+              setVisibleState(false);
+              setModalInitialValues({});
+              setReqParams({ nowTime: new Date().getTime() });
             }}
             onReset={() => {
+              setIconName('');
               setVisibleState(false);
               setModalInitialValues({});
             }}
