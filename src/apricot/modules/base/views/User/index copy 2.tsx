@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-18 16:02:03
- * @LastEditTime: 2021-11-03 17:41:39
+ * @LastEditTime: 2021-11-03 10:48:57
  * @LastEditors: AkiraMing
  * @Description: 用户列表页
  * @FilePath: \apricotAntdPro\src\apricot\modules\base\views\User\index.tsx
@@ -13,15 +13,26 @@ import ProCard from '@ant-design/pro-card';
 import baseServices from '@/apricot/modules/base/service';
 import type { TableListItem } from '../../types';
 import CommonTable from '../../../../../components/CommonTable';
+import { useState } from 'react';
 import { useRequest } from 'umi';
 import AvatarUpload from '../../components/AvatarUpload';
-import { useState } from 'react';
-
+// import AliyunOSSUpload from '../../components/AliyunOSSUpload';
 const { Option } = Select;
+// const deptList = {};
 
 function User() {
-  const [modalTitle, setModalTitle] = useState('');
+  // 部门筛选
+  // const [key, setKey] = useState('1');
+  const [modalVisibleState, setModalVisibleState] = useState(false);
   const [formInitialValues, setFormInitialValues] = useState({} as any);
+  const [modalTitle, setModalTitle] = useState('');
+  // oss 签名信息
+  // const OSSDataReq: any = '';
+  // const [OSSData, setOSSData] = useState();
+  // const OSSDataReq: any = useRequest(() => {
+  //   return baseServices.common.upload({});
+  // });
+  // setOSSData(OSSDataReq.data);
   // 权限列表
   const roleList: any = useRequest(() => {
     return baseServices.system.role.list({});
@@ -36,17 +47,17 @@ function User() {
         // if (!OSSDataReq) return;
         // console.log(OSSDataReq.data);
         let initImgUrl = '';
-        if (form.getFieldValue('headImg')) {
-          initImgUrl = form.getFieldValue('headImg')?.includes('http')
-            ? form.getFieldValue('headImg')
-            : `http://${window.location.host}${form.getFieldValue('headImg')}`;
+        if (formInitialValues.headImg) {
+          initImgUrl = formInitialValues?.headImg.includes('http')
+            ? formInitialValues?.headImg
+            : `http://${window.location.host}${formInitialValues?.headImg}`;
         }
         return (
           // <AliyunOSSUpload />
           <AvatarUpload
             initImgUrl={initImgUrl}
             getImgUrl={(imgUrl) => {
-              // console.log(imgUrl);
+              console.log(imgUrl);
               form.setFieldsValue({
                 headImg: imgUrl,
               });
@@ -87,20 +98,7 @@ function User() {
       dataIndex: 'password',
       hideInTable: true,
       valueType: 'password',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
-      },
-      renderFormItem: (a, b) => {
-        console.log(modalTitle);
-        if (modalTitle === '新建') a.originProps.formItemProps.rules[0].required = true;
-        if (modalTitle === '编辑') a.originProps.formItemProps.rules[0].required = false;
-        return b.defaultRender({});
-      },
+      // width: 100,
     },
     {
       title: '昵称',
@@ -128,7 +126,6 @@ function User() {
       title: '角色',
       dataIndex: 'roleIdList',
       hideInSearch: true,
-      initialValue: formInitialValues.roleIdList,
       formItemProps: {
         rules: [
           {
@@ -138,6 +135,7 @@ function User() {
         ],
       },
       render: (dom, rowData) => {
+        // console.log(rowData);
         const roleDom = rowData.roleName?.split(',').map((r: string) => (
           <Tag key={r} color="#108ee9">
             {r}
@@ -147,14 +145,20 @@ function User() {
       },
 
       renderFormItem: (schema, config, form) => {
+        // init
+        // console.log(roleList.data);
+
         return (
           <Select
             mode="multiple"
             allowClear
             style={{ width: '100%' }}
             placeholder="点击选择"
-            onChange={(value: any) => {
+            defaultValue={formInitialValues.roleIdList}
+            onChange={(value) => {
               form.setFieldsValue({ roleIdList: value });
+              // console.log('🚀 ~ file: index.tsx ~ line 92 ~ User ~ form', schema, config, form);
+              // console.log('🚀 ~ file: index.tsx ~ line 85 ~ User ~ value', form.getFieldsValue());
             }}
           >
             {roleList.data.map((r: any) => (
@@ -186,9 +190,10 @@ function User() {
       valueType: 'switch',
       // width: 60,
       hideInSearch: true,
-      // initialValue: formInitialValues.status || 1,
+      initialValue: formInitialValues.status || 1,
       render: (dom, { status }: any) =>
         status ? <Tag color="#87d068">启用</Tag> : <Tag color="#f50">禁用</Tag>,
+      // renderFormItem: ()=>
     },
     {
       title: '创建时间',
@@ -198,30 +203,47 @@ function User() {
       hideInForm: true,
       // width: 150,
     },
+    {
+      title: '操作',
+      // width: 150,
+      key: 'option',
+      valueType: 'option',
+      fixed: 'right',
+      hideInSearch: true,
+      render: (dom, rowData) => [
+        <a key="link">转移</a>,
+        <a
+          key="link"
+          onClick={async () => {
+            console.log(1111);
+            const res = await baseServices.system.user.info({ id: rowData.id });
+            setFormInitialValues(res.data);
+            setModalVisibleState(true);
+            // setaaaa(rowData.id);
+            // setVisibleState(true);
+            setModalTitle('编辑');
+          }}
+        >
+          编辑
+        </a>,
+        <a key="link">删除</a>,
+      ],
+    },
   ];
   return (
     <PageContainer>
       <ProCard>
         {/* <AliyunOSSUpload /> */}
         <CommonTable
+          modalTitle={modalTitle}
+          setModalTitle={setModalTitle}
+          visibleState={modalVisibleState}
+          setVisibleState={setModalVisibleState}
+          formInitialValues={formInitialValues}
+          setFormInitialValues={setFormInitialValues}
           headerTitle="用户列表"
           columns={columns}
           tableService={baseServices.system.user}
-          getModalTitle={(value) => {
-            setModalTitle(value);
-            console.log('🚀 ~ file: index.tsx ~ line 209 ~ User ~ modalTitle', modalTitle);
-          }}
-          getFormInitialValues={(value: any) => {
-            const roleNameArr = value?.roleName?.split(',');
-            console.log('🚀 ~ file: index.tsx ~ line 155 ~ User ~ roleNameArr', roleNameArr);
-            let defaultValue = roleList.data.filter((r: any) => roleNameArr?.includes(r.name));
-            // console.log('🚀 ~ file: index.tsx ~ line 151 ~ User ~ aaa', aaa);
-            defaultValue = defaultValue.map((r: { id: number }) => r.id);
-            console.log('🚀 ~ file: index.tsx ~ line 151 ~ User ~ defaultValue', defaultValue);
-
-            setFormInitialValues({ ...value, roleIdList: defaultValue });
-            console.log('🚀 ~ file: index.tsx ~ line 232 ~ User ~ value', value);
-          }}
         />
       </ProCard>
     </PageContainer>

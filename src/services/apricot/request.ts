@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-20 23:20:48
- * @LastEditTime: 2021-11-01 10:41:47
+ * @LastEditTime: 2021-11-03 16:34:18
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\services\apricot\request.ts
@@ -85,11 +85,6 @@ axios.interceptors.request.use(
           isRefreshing = true;
           // baseServices.open.refreshToken(token);
           baseServices.open.refreshToken(refreshToken).then((token1: any) => {
-            console.log(
-              '%c 🚀 ~ file: request.ts ~ line 86 ~ baseServices.open.refreshToken ~ token1',
-              'color:red',
-              token1,
-            );
             userUtils.SET_TOKEN(token1.data);
             requests.forEach((cb) => cb(token1.data.token));
             requests = [];
@@ -138,6 +133,7 @@ axios.interceptors.response.use(
           data,
         };
       default:
+        AntdMessage.error(message);
         return Promise.reject(message);
     }
   },
@@ -145,6 +141,7 @@ axios.interceptors.response.use(
     NProgress.done();
 
     if (error.response) {
+      console.log('🚀 ~ file: request.ts ~ line 150 ~ error.response', error.response);
       const { status, config } = error.response;
 
       switch (status) {
@@ -185,8 +182,9 @@ axios.interceptors.response.use(
         default:
           console.error(status, config.url);
       }
+    } else {
+      AntdMessage.error(error);
     }
-
     return Promise.reject(error.message);
   },
 );

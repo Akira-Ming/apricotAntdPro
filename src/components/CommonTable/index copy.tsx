@@ -14,6 +14,10 @@ import { useState } from 'react';
 // import React from 'react';
 // import { TableListItem } from '../../types';
 
+function refreshProps(props: number) {
+  console.log('🚀 ~ file: index.tsx ~ line 18 ~ refreshProps ~ props', props);
+}
+
 function CommonTable(props: {
   columns?: any;
   reqParams?: any;
@@ -41,6 +45,7 @@ function CommonTable(props: {
   } = props;
 
   const [reqParams, setReqParams] = useState({});
+  refreshProps(1);
 
   return (
     <>

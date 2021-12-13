@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-20 13:56:02
- * @LastEditTime: 2021-10-29 13:22:02
+ * @LastEditTime: 2021-11-01 22:32:07
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\app.tsx
@@ -106,7 +106,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
                 menuItem.perms = menuItem.perms.split(':');
               }
             }
-            if (menuItem.type == 2 || menuItem.isShow == 1) {
+            if (menuItem.type == 2 || menuItem.isShow == 0) {
               menuItem.hideInMenu = true;
             }
             return menuItem;

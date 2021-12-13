@@ -1,7 +1,7 @@
 ﻿/*
  * @Author: AkiraMing
  * @Date: 2021-10-20 13:56:02
- * @LastEditTime: 2021-10-29 20:29:19
+ * @LastEditTime: 2021-11-01 22:35:35
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\config\routes.ts
@@ -65,6 +65,19 @@ export default [
             component: '@/apricot/modules/base/views/Log',
           }
     ],
+  },
+  {
+    path: '/club',
+    routes: [
+      {
+        path: '/club/student',
+        component: '@/apricot/modules/club/views/Student',
+      },
+      {
+        path: '/club/college',
+        component: '@/apricot/modules/club/views/College',
+      },
+    ]
   },
   {
     path: '/plugin',

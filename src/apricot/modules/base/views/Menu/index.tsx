@@ -1,7 +1,7 @@
 /*
  * @Author: AkiraMing
  * @Date: 2021-10-23 17:56:36
- * @LastEditTime: 2021-10-31 00:39:26
+ * @LastEditTime: 2021-11-01 20:55:37
  * @LastEditors: AkiraMing
  * @Description: 描述
  * @FilePath: \apricotAntdPro\src\apricot\modules\base\views\Menu\index.tsx
@@ -94,11 +94,11 @@ function Menu() {
       ellipsis: true,
     },
     {
-      title: '是否隐藏',
+      title: '是否显示',
       dataIndex: 'isShow',
       align: 'center',
       render: (status: any) =>
-        status ? <Tag color="#f50">隐藏</Tag> : <Tag color="#87d068">显示</Tag>,
+        status ? <Tag color="#87d068">显示</Tag> : <Tag color="#f50">隐藏</Tag>,
     },
     {
       title: '路由缓存',
@@ -263,7 +263,7 @@ function Menu() {
       valueType: 'switch',
     },
     {
-      title: '是否隐藏',
+      title: '是否显示',
       dataIndex: 'isShow',
       hideInForm: typeState == '2',
       valueType: 'switch',
@@ -358,7 +358,7 @@ function Menu() {
             // onChange={onChange}
             // multiple
             // maxTagCount="responsive"
-            displayRender={(label: any, selectedOptions: any) => {
+            displayRender={(label: any, selectedOptions: any): any => {
               console.log(
                 '🚀 ~ file: index.tsx ~ line 248 ~ Menu ~ selectedOptions',
                 selectedOptions,
@@ -375,6 +375,8 @@ function Menu() {
       },
     },
   ];
+  // const reader = new FileReader(); //创建文件对象
+  // reader.readAsText('./index_copy.tsx'); //读取文件的内容/URL
 
   return (
     <PageContainer>
